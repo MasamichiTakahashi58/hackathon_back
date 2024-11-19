@@ -1,17 +1,20 @@
 package main
 
 import (
-    "net/http"
     "log"
+    "net/http"
     "hackathon_back/controller"
     "hackathon_back/db"
+    "github.com/joho/godotenv" 
 )
 
-
-
 func main() {
+    if err := godotenv.Load(".env"); err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
+
     if err := db.ConnectDB(); err != nil {
-        log.Fatal("Could not connect to database")
+        log.Fatalf("Could not connect to database: %v", err)
     }
     defer db.DB.Close()
 
@@ -33,6 +36,7 @@ func main() {
     http.HandleFunc("/reply/get", controller.GetRepliesHandler)
     http.HandleFunc("/reply/delete", controller.DeleteReplyHandler)
 
+    // サーバーの起動
     log.Println("Server started on :8080")
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
