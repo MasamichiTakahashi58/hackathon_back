@@ -29,7 +29,6 @@ func GetPosts() ([]model.Post, error) {
     }
     return posts, nil
 }
-
 func DeletePost(postID int) error {
     query := `DELETE FROM posts WHERE id = ?`
     _, err := db.DB.Exec(query, postID)

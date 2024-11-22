@@ -8,8 +8,20 @@ import (
     "github.com/joho/godotenv" 
 )
 
+func enableCORS(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") 
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        if r.Method == http.MethodOptions {
+            w.WriteHeader(http.StatusOK)
+            return
+        }
+        next.ServeHTTP(w, r)
+    })
+}
 func main() {
-    if err := godotenv.Load(".env"); err != nil {
+    if err := godotenv.Load("db/.env"); err != nil {
         log.Fatalf("Error loading .env file: %v", err)
     }
 
@@ -38,5 +50,5 @@ func main() {
 
     // サーバーの起動
     log.Println("Server started on :8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    log.Fatal(http.ListenAndServe(":8080", enableCORS(http.DefaultServeMux)))
 }
