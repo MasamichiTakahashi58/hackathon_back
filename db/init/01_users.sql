@@ -7,9 +7,6 @@ CREATE TABLE users (
   profile_image VARCHAR(255),
   header_image VARCHAR(255),
   bio VARCHAR(160),
-  location VARCHAR(100),
-  website VARCHAR(255),
-  birthdate DATE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

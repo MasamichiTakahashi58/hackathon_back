@@ -27,6 +27,9 @@ func GetPosts() ([]model.Post, error) {
         }
         posts = append(posts, post)
     }
+    if posts == nil {
+        return []model.Post{}, nil
+    }
     return posts, nil
 }
 func DeletePost(postID int) error {

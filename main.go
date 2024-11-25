@@ -30,8 +30,10 @@ func main() {
     }
     defer db.DB.Close()
 
-    // プロフィール
-    http.HandleFunc("/profile/update", controller.UpdateProfileHandler)
+    // ユーザー
+    http.HandleFunc("/users/create", controller.CreateUserHandler)
+    http.HandleFunc("/users/update", controller.UpdateUserHandler)
+    http.HandleFunc("/users/get", controller.GetUserHandler)
 
     // 投稿
     http.HandleFunc("/post/create", controller.CreatePostHandler)
