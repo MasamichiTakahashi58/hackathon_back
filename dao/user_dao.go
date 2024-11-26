@@ -27,6 +27,18 @@ func GetUserByID(userID int) (*model.User, error) {
     return &user, err
 }
 
+func GetUserByEmail(email string) (*model.User, error) {
+	query := `SELECT id, email, username, display_name, bio, profile_image FROM users WHERE email = ?`
+	row := db.DB.QueryRow(query, email)
+
+	var user model.User
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage)
+	if err == sql.ErrNoRows {
+		return nil, nil // ユーザーが見つからない場合
+	}
+	return &user, err
+}
+
 func UpdateUser(user *model.User) error {
     query := `
         UPDATE users 

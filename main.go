@@ -34,6 +34,7 @@ func main() {
     http.HandleFunc("/users/create", controller.CreateUserHandler)
     http.HandleFunc("/users/update", controller.UpdateUserHandler)
     http.HandleFunc("/users/get", controller.GetUserHandler)
+    http.HandleFunc("/users/email", controller.GetUserByEmailHandler)
 
     // 投稿
     http.HandleFunc("/post/create", controller.CreatePostHandler)

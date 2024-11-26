@@ -69,6 +69,25 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(user)
 }
 
+func GetUserByEmailHandler(w http.ResponseWriter, r *http.Request) {
+	email := r.URL.Query().Get("email") // クエリパラメータからemailを取得
+	if email == "" {
+		http.Error(w, "Email is required", http.StatusBadRequest)
+		return
+	}
+
+	user, err := usecase.GetUserByEmail(email)
+	if err != nil {
+		log.Printf("Error fetching user by email: %v", err)
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		log.Printf("JSON encode error: %v", err)
+	}
+}
 
 // ユーザー情報更新
 func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
