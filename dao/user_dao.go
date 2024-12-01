@@ -1,33 +1,51 @@
 package dao
 
 import (
+    "database/sql"
     "hackathon_back/db"
     "hackathon_back/model"
 )
 
-func InsertTemporaryUser(user model.TemporaryUser) error {
-    query := `INSERT INTO temporary_users (email, password, username, verification_code, expires_at) VALUES (?, ?, ?, ?, ?)`
-    _, err := db.DB.Exec(query, user.Email, user.Password, user.Username, user.VerificationCode, user.ExpiresAt)
+func CreateUser(user *model.User) error {
+	query := `
+		INSERT INTO users (email, username, display_name, profile_image, header_image, bio)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`
+	_, err := db.DB.Exec(query, user.Email, user.Username, user.DisplayName, user.ProfileImage, user.HeaderImage, user.Bio)
+	return err
+}
+
+func GetUserByID(userID int) (*model.User, error) {
+    query := `SELECT id, email, username, display_name, bio, profile_image FROM users WHERE id = ?`
+    row := db.DB.QueryRow(query, userID)
+
+    var user model.User
+    err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage)
+    if err == sql.ErrNoRows {
+        return nil, nil
+    }
+    return &user, err
+}
+
+func GetUserByEmail(email string) (*model.User, error) {
+	query := `SELECT id, email, username, display_name, bio, profile_image FROM users WHERE email = ?`
+	row := db.DB.QueryRow(query, email)
+
+	var user model.User
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage)
+	if err == sql.ErrNoRows {
+		return nil, nil // ユーザーが見つからない場合
+	}
+	return &user, err
+}
+
+func UpdateUser(user *model.User) error {
+    query := `
+        UPDATE users 
+        SET username = ?, display_name = ?, bio = ?, profile_image = ?
+        WHERE id = ?
+    `
+    _, err := db.DB.Exec(query, user.Username, user.DisplayName, user.Bio, user.ProfileImage, user.ID)
     return err
-}
-
-func GetTemporaryUser(email string) (*model.TemporaryUser, error) {
-    var user model.TemporaryUser
-    query := `SELECT email, verification_code, expires_at FROM temporary_users WHERE email = ?`
-    err := db.DB.QueryRow(query, email).Scan(&user.Email, &user.VerificationCode, &user.ExpiresAt)
-    if err != nil {
-        return nil, err
-    }
-    return &user, nil
-}
-
-func ConfirmUser(email string) error {
-    query := `INSERT INTO users (email, password, username) SELECT email, password, username FROM temporary_users WHERE email = ?`
-    _, err := db.DB.Exec(query, email)
-    if err != nil {
-        return err
-    }
-    _, _ = db.DB.Exec("DELETE FROM temporary_users WHERE email = ?", email)
-    return nil
 }
 
