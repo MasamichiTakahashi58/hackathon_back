@@ -12,7 +12,24 @@ func CreatePost(post *model.Post) error {
 }
 
 func GetPosts() ([]model.Post, error) {
-    rows, err := db.DB.Query(`SELECT id, user_id, content, image_url, created_at, updated_at FROM posts`)
+    query := `
+        SELECT 
+            posts.id AS post_id,
+            posts.user_id,
+            posts.content,
+            posts.image_url,
+            posts.created_at,
+            posts.updated_at,
+            users.username,
+            users.display_name
+        FROM 
+            posts
+        JOIN 
+            users ON posts.user_id = users.id
+        ORDER BY 
+            posts.created_at DESC
+    `
+    rows, err := db.DB.Query(query)
     if err != nil {
         return nil, err
     }
@@ -21,7 +38,7 @@ func GetPosts() ([]model.Post, error) {
     var posts []model.Post
     for rows.Next() {
         var post model.Post
-        err := rows.Scan(&post.ID, &post.UserID, &post.Content, &post.ImageURL, &post.CreatedAt, &post.UpdatedAt)
+        err := rows.Scan(&post.ID, &post.UserID, &post.Content, &post.ImageURL, &post.CreatedAt, &post.UpdatedAt, &post.Username, &post.DisplayName)
         if err != nil {
             return nil, err
         }
@@ -32,6 +49,7 @@ func GetPosts() ([]model.Post, error) {
     }
     return posts, nil
 }
+
 func DeletePost(postID int) error {
     query := `DELETE FROM posts WHERE id = ?`
     _, err := db.DB.Exec(query, postID)

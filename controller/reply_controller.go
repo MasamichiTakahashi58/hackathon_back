@@ -15,6 +15,11 @@ func CreateReplyHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
+    
+    if reply.Content == "" {
+        http.Error(w, "Content is required", http.StatusBadRequest)
+        return
+    }
 
     err = usecase.CreateNewReply(&reply)
     if err != nil {

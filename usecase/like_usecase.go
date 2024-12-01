@@ -2,6 +2,7 @@ package usecase
 
 import (
     "hackathon_back/dao"
+    "hackathon_back/model"
 )
 
 func AddLike(userID, postID int) error {
@@ -24,4 +25,8 @@ func RemoveLike(userID, postID int) error {
 
 func CountLikes(postID int) (int, error) {
     return dao.CountLikes(postID)
+}
+
+func FetchLikesByPostID(postID int) ([]model.Like, error) {
+    return dao.GetLikesByPostID(postID)
 }
