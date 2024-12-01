@@ -7,6 +7,6 @@ type Reply struct {
     DisplayName string `json:"display_name"`  
     PostID    int    `json:"post_id"`
     Content   string `json:"content"`
-    ParentID  int    `json:"parent_id,omitempty"`
+    ParentID  *int    `json:"parent_id,omitempty"`
     CreatedAt string `json:"created_at"`
 }
