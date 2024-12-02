@@ -49,6 +49,7 @@ func main() {
     http.HandleFunc("/like/remove", controller.RemoveLikeHandler)
     http.HandleFunc("/like/count", controller.CountLikesHandler)
     http.HandleFunc("/likes", controller.GetLikesByPostIDHandler)
+    
     http.HandleFunc("/like/hasLiked", controller.HasUserLikedHandler)
 
     // リプライ
