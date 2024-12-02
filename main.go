@@ -71,4 +71,3 @@ func main() {
     http.ListenAndServe(":"+port, enableCORS(http.DefaultServeMux))
 }
 
-
