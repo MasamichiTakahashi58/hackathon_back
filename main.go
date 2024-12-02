@@ -1,11 +1,13 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "hackathon_back/controller"
-    "hackathon_back/db"
-    "github.com/joho/godotenv" 
+	"hackathon_back/controller"
+	"hackathon_back/db"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -22,6 +24,7 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
+
     if err := godotenv.Load("./.env"); err != nil {
         log.Fatalf("Error loading .env file: %v", err)
     }
@@ -57,8 +60,14 @@ func main() {
     http.HandleFunc("/reply/get", controller.GetRepliesHandler)
     http.HandleFunc("/reply/delete", controller.DeleteReplyHandler)
 
-    // サーバーの起動
-    log.Println("Server started on :8080")
-    log.Fatal(http.ListenAndServe(":8080", enableCORS(http.DefaultServeMux)))
+    // ポート番号を環境変数 PORT から取得
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080" // デフォルトポート
+    }
+
+    // サーバー起動
+    log.Printf("Server started on :%s", port)
+    log.Fatal(http.ListenAndServe(":"+port, enableCORS(http.DefaultServeMux)))
 }
 
