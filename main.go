@@ -49,7 +49,7 @@ func main() {
     http.HandleFunc("/like/remove", controller.RemoveLikeHandler)
     http.HandleFunc("/like/count", controller.CountLikesHandler)
     http.HandleFunc("/likes", controller.GetLikesByPostIDHandler)
-    
+
     http.HandleFunc("/like/hasLiked", controller.HasUserLikedHandler)
 
     // リプライ
@@ -61,3 +61,4 @@ func main() {
     log.Println("Server started on :8080")
     log.Fatal(http.ListenAndServe(":8080", enableCORS(http.DefaultServeMux)))
 }
+
