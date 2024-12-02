@@ -1,9 +1,10 @@
 package dao
 
 import (
-    "database/sql"
-    "hackathon_back/db"
-    "hackathon_back/model"
+	"database/sql"
+	"fmt"
+	"hackathon_back/db"
+	"hackathon_back/model"
 )
 
 func CreateUser(user *model.User) error {
@@ -49,3 +50,8 @@ func UpdateUser(user *model.User) error {
     return err
 }
 
+func UpdateUserImage(userID int, column string, filePath string) error {
+	query := fmt.Sprintf("UPDATE users SET %s = ? WHERE id = ?", column)
+	_, err := db.DB.Exec(query, filePath, userID)
+	return err
+}

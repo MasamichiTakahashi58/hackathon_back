@@ -7,6 +7,8 @@ import (
     "strconv"
 	"hackathon_back/model"
 	"hackathon_back/usecase"
+	"fmt"
+	"io"
 )
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -105,3 +107,52 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusOK)
 }
 
+
+func UploadUserImageHandler(w http.ResponseWriter, r *http.Request) {
+	const MaxUploadSize = 10 * 1024 * 1024 // 最大10MB
+
+	// リクエストの解析
+	if err := r.ParseMultipartForm(MaxUploadSize); err != nil {
+		http.Error(w, "File is too large", http.StatusBadRequest)
+		return
+	}
+
+	// 必要なデータを取得
+	file, fileHeader, err := r.FormFile("image")
+	if err != nil {
+		http.Error(w, "Invalid file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	imageType := r.FormValue("type") // "icon" または "header"
+	if imageType != "icon" && imageType != "header" {
+		http.Error(w, "Invalid image type", http.StatusBadRequest)
+		return
+	}
+
+	userIDStr := r.FormValue("userId")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	// ファイルの内容を読み取る
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(w, "Failed to read file", http.StatusInternalServerError)
+		return
+	}
+
+	// ユースケースを呼び出して画像を保存
+	filePath, err := usecase.SaveUserImage(userID, imageType, fileHeader.Filename, fileData)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to save image: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// 成功レスポンス
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Image uploaded successfully", "filePath": filePath})
+}
