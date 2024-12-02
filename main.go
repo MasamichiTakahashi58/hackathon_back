@@ -68,7 +68,7 @@ func main() {
 
     // サーバー起動
     log.Printf("Server started on :%s", port)
-    log.Fatal(http.ListenAndServe(":"+port, enableCORS(http.DefaultServeMux)))
+    http.ListenAndServe(":"+port, enableCORS(http.DefaultServeMux))
 }
 
 
