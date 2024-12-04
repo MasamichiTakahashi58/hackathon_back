@@ -60,6 +60,9 @@ func main() {
     http.HandleFunc("/reply/get", controller.GetRepliesHandler)
     http.HandleFunc("/reply/delete", controller.DeleteReplyHandler)
 
+    // Gemini
+    http.HandleFunc("/api/generate", controller.GenerateContentHandler)
+
     // ポート番号を環境変数 PORT から取得
     port := os.Getenv("PORT")
     if port == "" {
