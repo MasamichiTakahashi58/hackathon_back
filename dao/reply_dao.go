@@ -26,28 +26,34 @@ func CreateReply(reply *model.Reply) (int, error) {
 }
 
 func AddReplyRelation(postID int, parentID *int, replyID int) error {
-    // 親リプライのリレーションを継承して挿入
+    var relationDepth int
+
     if parentID != nil {
+        // 親リプライのrelation_depthを取得して+1
         query := `
-            INSERT INTO reply_relations (post_id, parent_reply_id, reply_id, relation_depth)
-            SELECT ?, parent_reply_id, ?, relation_depth + 1
+            SELECT relation_depth
             FROM reply_relations
             WHERE reply_id = ?
         `
-        _, err := db.DB.Exec(query, postID, replyID, *parentID)
-        if err != nil {
+        row := db.DB.QueryRow(query, *parentID)
+        if err := row.Scan(&relationDepth); err != nil {
             return err
         }
+        relationDepth++ // 親リプライの深さ +1
+    } else {
+        // 親リプライがない場合（ポスト直下）
+        relationDepth = 1
     }
 
-    // 自身の親子関係を追加
+    // 新しいリレーションを挿入
     query := `
         INSERT INTO reply_relations (post_id, parent_reply_id, reply_id, relation_depth)
-        VALUES (?, ?, ?, 1)
+        VALUES (?, ?, ?, ?)
     `
-    _, err := db.DB.Exec(query, postID, parentID, replyID)
+    _, err := db.DB.Exec(query, postID, parentID, replyID, relationDepth)
     return err
 }
+
 
 
 func GetRepliesByPostWithRelations(postID int) ([]model.Reply, error) {
@@ -92,6 +98,7 @@ func GetRepliesByPostWithRelations(postID int) ([]model.Reply, error) {
     }
     return replies, nil
 }
+
 
 
 func DeleteReply(replyID int) error {
