@@ -24,6 +24,7 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
+    println("#########################################################################################################")
 
     if err := godotenv.Load("./.env"); err != nil {
         log.Fatalf("Error loading .env file: %v", err)
