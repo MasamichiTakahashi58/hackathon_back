@@ -33,7 +33,7 @@ func GetUserByEmail(email string) (*model.User, error) {
 	row := db.DB.QueryRow(query, email)
 
 	var user model.User
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage, user.HeaderImage)
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage, &user.HeaderImage)
 	if err == sql.ErrNoRows {
 		return nil, nil // ユーザーが見つからない場合
 	}

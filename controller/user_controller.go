@@ -109,7 +109,7 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 
 func UploadUserImageHandler(w http.ResponseWriter, r *http.Request) {
-	const MaxUploadSize = 500 * 1024 * 1024 // 最大500MB
+	const MaxUploadSize = 10 * 1024 * 1024 // 最大10MB
 
 	// リクエストの解析
 	if err := r.ParseMultipartForm(MaxUploadSize); err != nil {
