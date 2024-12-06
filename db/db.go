@@ -10,7 +10,8 @@ import (
 var DB *sql.DB
 
 func ConnectDB() error {
-    dsn := os.Getenv("MYSQL_USER") + ":" + os.Getenv("MYSQL_PASSWORD") + "@" +"(" + os.Getenv("MYSQL_HOST") +")" + "/" + os.Getenv("MYSQL_DATABASE")
+    dsn := os.Getenv("MYSQL_USER") + ":" + os.Getenv("MYSQL_PASSWORD") + "@"  + os.Getenv("MYSQL_HOST") + "/" + os.Getenv("MYSQL_DATABASE") + "?parseTime=true"
+    println(dsn)
     var err error
     DB, err = sql.Open("mysql", dsn)
     if err != nil {
