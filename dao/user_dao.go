@@ -2,7 +2,6 @@ package dao
 
 import (
 	"database/sql"
-	"fmt"
 	"hackathon_back/db"
 	"hackathon_back/model"
 )
@@ -72,11 +71,4 @@ func UpdateUser(user *model.User) error {
 
     _, err := db.DB.Exec(query, params...)
     return err
-}
-
-
-func UpdateUserImage(userID int, column string, filePath string) error {
-	query := fmt.Sprintf("UPDATE users SET %s = ? WHERE id = ?", column)
-	_, err := db.DB.Exec(query, filePath, userID)
-	return err
 }

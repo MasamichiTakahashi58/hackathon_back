@@ -40,8 +40,6 @@ func main() {
     http.HandleFunc("/users/get", controller.GetUserHandler)
     http.HandleFunc("/users/email", controller.GetUserByEmailHandler)
     
-    http.HandleFunc("/upload/user-image", controller.UploadUserImageHandler)
-
     // 投稿
     http.HandleFunc("/post/create", controller.CreatePostHandler)
     http.HandleFunc("/post/get", controller.GetPostsHandler)
