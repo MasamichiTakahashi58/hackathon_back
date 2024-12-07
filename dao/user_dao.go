@@ -41,14 +41,39 @@ func GetUserByEmail(email string) (*model.User, error) {
 }
 
 func UpdateUser(user *model.User) error {
-    query := `
-        UPDATE users 
-        SET username = ?, display_name = ?, bio = ?, profile_image = ?, header_image = ?
-        WHERE id = ?
-    `
-    _, err := db.DB.Exec(query, user.Username, user.DisplayName, user.Bio, user.ProfileImage, user.HeaderImage, user.ID)
+    query := "UPDATE users SET "
+    params := []interface{}{}
+
+    if user.Username != "" {
+        query += "username = ?, "
+        params = append(params, user.Username)
+    }
+    if user.DisplayName != "" {
+        query += "display_name = ?, "
+        params = append(params, user.DisplayName)
+    }
+    if user.Bio != nil {
+        query += "bio = ?, "
+        params = append(params, user.Bio)
+    }
+    if user.ProfileImage != nil {
+        query += "profile_image = ?, "
+        params = append(params, user.ProfileImage)
+    }
+    if user.HeaderImage != nil {
+        query += "header_image = ?, "
+        params = append(params, user.HeaderImage)
+    }
+
+    // クエリ末尾のカンマとスペースを削除
+    query = query[:len(query)-2]
+    query += " WHERE id = ?"
+    params = append(params, user.ID)
+
+    _, err := db.DB.Exec(query, params...)
     return err
 }
+
 
 func UpdateUserImage(userID int, column string, filePath string) error {
 	query := fmt.Sprintf("UPDATE users SET %s = ? WHERE id = ?", column)
