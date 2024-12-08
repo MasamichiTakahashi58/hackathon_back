@@ -30,3 +30,8 @@ func RemoveReply(replyID int) error {
     // リレーションテーブルの関連データを削除
     return dao.DeleteReplyRelation(replyID)
 }
+
+func RemoveRepliesByPostID(postID int) error {
+    return dao.DeleteRepliesByPostID(postID)
+}
+

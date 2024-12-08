@@ -51,6 +51,13 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    err = usecase.RemoveRepliesByPostID(postID)
+    if err != nil {
+        log.Printf("Error deleting replies for post ID %d: %v", postID, err)
+        http.Error(w, "Failed to delete replies", http.StatusInternalServerError)
+        return
+    }
+
     err = usecase.RemovePost(postID)
     if err != nil {
         log.Printf("Error deleting post with ID %d: %v", postID, err)

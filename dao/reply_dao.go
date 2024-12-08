@@ -112,3 +112,18 @@ func DeleteReplyRelation(replyID int) error {
     _, err := db.DB.Exec(query, replyID, replyID)
     return err
 }
+
+// ポストIDでリプライを削除
+func DeleteRepliesByPostID(postID int) error {
+    // リレーションから削除
+    relationQuery := `DELETE FROM reply_relations WHERE post_id = ?`
+    _, err := db.DB.Exec(relationQuery, postID)
+    if err != nil {
+        return err
+    }
+
+    // リプライ本体を削除
+    replyQuery := `DELETE FROM replies WHERE post_id = ?`
+    _, err = db.DB.Exec(replyQuery, postID)
+    return err
+}
