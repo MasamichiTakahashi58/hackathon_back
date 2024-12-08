@@ -6,13 +6,27 @@ import (
 )
 
 func CreateNewReply(reply *model.Reply) error {
-    return dao.CreateReply(reply)
+    replyID, err := dao.CreateReply(reply)
+    if err != nil {
+        return err
+    }
+
+    // リプライIDを設定
+    reply.ID = replyID
+
+    // リレーションテーブルを更新
+    return dao.AddReplyRelation(reply.PostID, reply.ParentID, replyID)
 }
 
 func FetchRepliesByPost(postID int) ([]model.Reply, error) {
-    return dao.GetRepliesByPost(postID)
+    return dao.GetRepliesByPostWithRelations(postID)
 }
 
 func RemoveReply(replyID int) error {
-    return dao.DeleteReply(replyID)
+    if err := dao.DeleteReply(replyID); err != nil {
+        return err
+    }
+
+    // リレーションテーブルの関連データを削除
+    return dao.DeleteReplyRelation(replyID)
 }

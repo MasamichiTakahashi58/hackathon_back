@@ -11,6 +11,7 @@ func CreatePost(post *model.Post) error {
     return err
 }
 
+
 func GetPosts() ([]model.Post, error) {
     query := `
         SELECT 

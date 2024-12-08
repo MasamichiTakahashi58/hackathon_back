@@ -22,4 +22,3 @@ func GetUserByEmail(email string) (*model.User, error) {
 func UpdateUser(user *model.User) error {
     return dao.UpdateUser(user)
 }
-

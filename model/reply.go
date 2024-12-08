@@ -9,4 +9,5 @@ type Reply struct {
     Content   string `json:"content"`
     ParentID  *int    `json:"parent_id,omitempty"`
     CreatedAt string `json:"created_at"`
+    RelationDepth int   `json:"relation_depth,omitempty"`
 }

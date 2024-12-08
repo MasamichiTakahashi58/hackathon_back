@@ -97,6 +97,13 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // ユーザーIDが必須
+    if user.ID == 0 {
+        http.Error(w, "User ID is required", http.StatusBadRequest)
+        return
+    }
+
+    // 変更されたフィールドだけを更新
     if err := usecase.UpdateUser(&user); err != nil {
         http.Error(w, "Failed to update user", http.StatusInternalServerError)
         return
@@ -104,4 +111,3 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
     w.WriteHeader(http.StatusOK)
 }
-

@@ -1,9 +1,9 @@
 package dao
 
 import (
-    "database/sql"
-    "hackathon_back/db"
-    "hackathon_back/model"
+	"database/sql"
+	"hackathon_back/db"
+	"hackathon_back/model"
 )
 
 func CreateUser(user *model.User) error {
@@ -16,11 +16,11 @@ func CreateUser(user *model.User) error {
 }
 
 func GetUserByID(userID int) (*model.User, error) {
-    query := `SELECT id, email, username, display_name, bio, profile_image FROM users WHERE id = ?`
+    query := `SELECT id, email, username, display_name, bio, profile_image, header_image FROM users WHERE id = ?`
     row := db.DB.QueryRow(query, userID)
 
     var user model.User
-    err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage)
+    err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage, &user.HeaderImage)
     if err == sql.ErrNoRows {
         return nil, nil
     }
@@ -28,11 +28,11 @@ func GetUserByID(userID int) (*model.User, error) {
 }
 
 func GetUserByEmail(email string) (*model.User, error) {
-	query := `SELECT id, email, username, display_name, bio, profile_image FROM users WHERE email = ?`
+	query := `SELECT id, email, username, display_name, bio, profile_image, header_image FROM users WHERE email = ?`
 	row := db.DB.QueryRow(query, email)
 
 	var user model.User
-	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage)
+	err := row.Scan(&user.ID, &user.Email, &user.Username, &user.DisplayName, &user.Bio, &user.ProfileImage, &user.HeaderImage)
 	if err == sql.ErrNoRows {
 		return nil, nil // ユーザーが見つからない場合
 	}
@@ -40,12 +40,35 @@ func GetUserByEmail(email string) (*model.User, error) {
 }
 
 func UpdateUser(user *model.User) error {
-    query := `
-        UPDATE users 
-        SET username = ?, display_name = ?, bio = ?, profile_image = ?
-        WHERE id = ?
-    `
-    _, err := db.DB.Exec(query, user.Username, user.DisplayName, user.Bio, user.ProfileImage, user.ID)
+    query := "UPDATE users SET "
+    params := []interface{}{}
+
+    if user.Username != "" {
+        query += "username = ?, "
+        params = append(params, user.Username)
+    }
+    if user.DisplayName != "" {
+        query += "display_name = ?, "
+        params = append(params, user.DisplayName)
+    }
+    if user.Bio != nil {
+        query += "bio = ?, "
+        params = append(params, user.Bio)
+    }
+    if user.ProfileImage != nil {
+        query += "profile_image = ?, "
+        params = append(params, user.ProfileImage)
+    }
+    if user.HeaderImage != nil {
+        query += "header_image = ?, "
+        params = append(params, user.HeaderImage)
+    }
+
+    // クエリ末尾のカンマとスペースを削除
+    query = query[:len(query)-2]
+    query += " WHERE id = ?"
+    params = append(params, user.ID)
+
+    _, err := db.DB.Exec(query, params...)
     return err
 }
-
